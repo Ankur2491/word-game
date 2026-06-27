@@ -71,7 +71,7 @@
       <div class="word">
         @for(letter of letters(); track $index){
         @if(currentWord()){
-        <input #tile class="tile" [value]="letter" readonly (keydown)="onKeyDown($event)"
+        <input #tile class="tile" [value]="letter" (keydown)="onKeyDown($event)"
           [placeholder]="currentWord()[$index]" />
         }
 
