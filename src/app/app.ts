@@ -62,34 +62,11 @@ export class App implements OnInit, AfterViewInit {
   @ViewChildren('tile')
   tiles!: QueryList<ElementRef<HTMLInputElement>>;
 
-  onKeyDown(event: KeyboardEvent) {
-
-    event.preventDefault();
-
-    const key = event.key.toUpperCase();
-
-    // Letter pressed
-    if (/^[A-Z]$/.test(key)) {
-
-      if (this.currentIndex >= this.WORD_LENGTH) {
-        return;
-      }
-
-      this.letters.update(current => {
-        const updated = [...current];
-        updated[this.currentIndex] = key;
-        return updated;
-      });
-
-      this.currentIndex++;
-
-      this.focusCurrent();
-
-      return;
-    }
+  onKeyDown(event: KeyboardEvent, index: number) {
 
     // Backspace
     if (event.key === 'Backspace') {
+      event.preventDefault();
 
       if (this.currentIndex === 0) {
         return;
@@ -110,7 +87,7 @@ export class App implements OnInit, AfterViewInit {
 
     // Arrow Left
     if (event.key === 'ArrowLeft') {
-
+      event.preventDefault();
       if (this.currentIndex > 0) {
         this.currentIndex--;
         this.focusCurrent();
@@ -121,6 +98,7 @@ export class App implements OnInit, AfterViewInit {
 
     // Arrow Right
     if (event.key === 'ArrowRight') {
+      event.preventDefault();
 
       if (this.currentIndex < this.WORD_LENGTH) {
         this.currentIndex++;
@@ -132,6 +110,7 @@ export class App implements OnInit, AfterViewInit {
 
     // Enter
     if (event.key === 'Enter') {
+      event.preventDefault();
       let typedWord = this.letters().join('');
       let curW = this.currentWord();
       if (typedWord === curW) {
@@ -252,7 +231,7 @@ export class App implements OnInit, AfterViewInit {
     this.currentIndex = 0;
 
     this.filterFourLetterWords(this.dictWords);
-
+    this.userForm.reset();
     setTimeout(() => {
       this.tiles.get(0)?.nativeElement.focus();
     });
@@ -262,4 +241,24 @@ export class App implements OnInit, AfterViewInit {
     this.user.set('');
     this.isLoginPage.set(true);
   }
+
+  onInput(event: Event, index: number) {
+  const input = event.target as HTMLInputElement;
+
+  const value = input.value.toUpperCase().slice(0, 1);
+
+  this.letters.update(arr => {
+    const copy = [...arr];
+    copy[index] = value;
+    return copy;
+  });
+
+  this.currentIndex = Math.min(index + 1, this.WORD_LENGTH);
+
+  if (value && index < this.WORD_LENGTH - 1) {
+    queueMicrotask(() => {
+      this.tiles.get(index + 1)?.nativeElement.focus();
+    });
+  }
+}
 }
