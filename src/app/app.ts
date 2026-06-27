@@ -212,9 +212,10 @@ export class App implements OnInit, AfterViewInit {
   // }
 
   startGame() {
-    localStorage.setItem('userName', this.userName);
-
-    this.user.set(this.userName);
+    if(!localStorage.getItem('userName')) {
+      localStorage.setItem('userName', this.userName)
+    }
+    this.user.set(localStorage.getItem('userName')??'');
     this.isLoginPage.set(false);
 
     this.gameOver.set(false);
