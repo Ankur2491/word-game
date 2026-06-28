@@ -265,6 +265,8 @@ export class App implements OnInit, AfterViewInit {
   const input = event.target as HTMLInputElement;
 
   const value = input.value.toUpperCase().slice(0, 1);
+  
+  input.value = value;
 
   this.letters.update(arr => {
     const copy = [...arr];
