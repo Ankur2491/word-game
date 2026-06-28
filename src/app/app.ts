@@ -21,10 +21,12 @@ export class App implements OnInit, AfterViewInit {
   isSameWord = signal<boolean>(false);
   isCorrectWord = signal<boolean>(false);
   isWrongMod = signal<boolean>(false);
+  alreadyTyped = signal<boolean>(false);
   gameOver = signal<boolean>(false);
   gameScore = signal<number>(0);
   livesLeft = signal<string[]>(Array(3).fill(''));
   dictWords: string[] = [];
+  wordsTyped = new Set<String>();
   private fb = inject(FormBuilder);
   userForm = this.fb.group({
     userName: ['', Validators.required]
@@ -117,6 +119,7 @@ export class App implements OnInit, AfterViewInit {
         this.isInvalidWord.set(false);
         this.isCorrectWord.set(false);
         this.isWrongMod.set(false);
+        this.alreadyTyped.set(false);
         this.isSameWord.set(true);
       }
       else {
@@ -125,6 +128,7 @@ export class App implements OnInit, AfterViewInit {
           this.isSameWord.set(false);
           this.isCorrectWord.set(false);
           this.isWrongMod.set(false);
+          this.alreadyTyped.set(false);
           this.isInvalidWord.set(true);
           if (this.livesLeft().length == 1) {
             this.gameOver.set(true);
@@ -140,9 +144,19 @@ export class App implements OnInit, AfterViewInit {
           })
         }
         else if (this.isValidModification(typedWord)) {
+          if(this.wordsTyped.has(typedWord)) {
+              this.isSameWord.set(false);
+              this.isCorrectWord.set(false);
+              this.isWrongMod.set(false);
+              this.isInvalidWord.set(false);
+              this.alreadyTyped.set(true);
+         }
+         else {
+          this.wordsTyped.add(typedWord);
           this.isInvalidWord.set(false);
           this.isSameWord.set(false);
           this.isWrongMod.set(false);
+          this.alreadyTyped.set(false);
           this.isCorrectWord.set(true);
           this.currentWord.set(typedWord.toUpperCase());
           this.letters.set(Array(this.WORD_LENGTH).fill(''));
@@ -153,10 +167,12 @@ export class App implements OnInit, AfterViewInit {
             return currentScore;
           })
         }
+        }
         else {
           this.isSameWord.set(false);
           this.isCorrectWord.set(false);
           this.isInvalidWord.set(false);
+          this.alreadyTyped.set(false);
           this.isWrongMod.set(true);
         }
       }
@@ -225,9 +241,11 @@ export class App implements OnInit, AfterViewInit {
     this.isSameWord.set(false);
     this.isCorrectWord.set(false);
     this.isWrongMod.set(false);
+    this.alreadyTyped.set(false);
 
     this.livesLeft.set(Array(3).fill(''));
     this.letters.set(Array(this.WORD_LENGTH).fill(''));
+    this.wordsTyped = new Set<string>();
 
     this.currentIndex = 0;
 

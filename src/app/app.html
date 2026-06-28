@@ -63,6 +63,11 @@
         <span>You need to change at least one letter!</span>
       </div>
       }
+      @if(alreadyTyped()) {
+      <div role="alert" class="alert alert-warning alert-soft flex justify-center text-center">
+        <span>You have already typed this word!</span>
+      </div>
+      }
       @if(isWrongMod()) {
       <div role="alert" class="alert alert-info alert-soft flex justify-center text-center">
         <span>You can change at most one letter!</span>
